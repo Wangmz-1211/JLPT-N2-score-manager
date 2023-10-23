@@ -3,6 +3,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
+import cookieRefresher from './middlewares/cookieRefresher'
 
 const app = express()
 const port = 8082
@@ -11,6 +12,7 @@ const port = 8082
 app.use(cors({ credentials: true, origin: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
+app.use(cookieRefresher)
 
 // route
 
