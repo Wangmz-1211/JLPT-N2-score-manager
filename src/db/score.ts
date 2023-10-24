@@ -1,34 +1,47 @@
 import mongoose from 'mongoose'
 
 const ScoreSchema = new mongoose.Schema({
+	// _id attribute of the owner user
+	user_id: { type: String, required: true },
+	// email attribute of the owner user
+	user_email: { type: String },
+	// the title of the exam, like N2-YYYY-MM
+	title: { type: String, required: true },
+	// the current total score of the exam, avoid duplicated calculation
+	total_score: { type: Number, default: 0 },
 	vocabulary: {
-		v1: { type: Number },
-		v2: { type: Number },
-		v3: { type: Number },
-		v4: { type: Number },
-		v5: { type: Number },
-		v6: { type: Number },
+		v1: { type: Number, default: 0 },
+		v2: { type: Number, default: 0 },
+		v3: { type: Number, default: 0 },
+		v4: { type: Number, default: 0 },
+		v5: { type: Number, default: 0 },
+		v6: { type: Number, default: 0 },
 	},
 	grammar: {
-		g7: { type: Number },
-		g8: { type: Number },
-		g9: { type: Number },
+		g7: { type: Number, default: 0 },
+		g8: { type: Number, default: 0 },
+		g9: { type: Number, default: 0 },
 	},
 	reading: {
-		r10: { type: Number },
-		r11_1: { type: Number },
-		r11_2: { type: Number },
-		r12: { type: Number },
-		r13: { type: Number },
-		r14: { type: Number },
+		r10: { type: Number, default: 0 },
+		r11_1: { type: Number, default: 0 },
+		r11_2: { type: Number, default: 0 },
+		r12: { type: Number, default: 0 },
+		r13: { type: Number, default: 0 },
+		r14: { type: Number, default: 0 },
 	},
 	listening: {
-		l1: { type: Number },
-		l2: { type: Number },
-		l3: { type: Number },
-		l4: { type: Number },
-		l5: { type: Number },
+		l1: { type: Number, default: 0 },
+		l2: { type: Number, default: 0 },
+		l3: { type: Number, default: 0 },
+		l4: { type: Number, default: 0 },
+		l5: { type: Number, default: 0 },
 	},
 })
 
 export const ScoreModel = mongoose.model('Score', ScoreSchema)
+
+export const getScoreListByUserId = (id: String) =>
+	ScoreModel.find({ user_id: id })
+export const getScoreListByUserEmail = (email: String) =>
+	ScoreModel.find({ user_email: email })

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 import cookieRefresher from './middlewares/cookieRefresher'
+import scoreRouter from './route/score'
 
 const app = express()
 const port = 8082
@@ -15,6 +16,7 @@ app.use(cookieParser())
 app.use(cookieRefresher)
 
 // route
+app.use('/api', scoreRouter)
 
 app.listen(port, () => {
 	console.log('Started the service at http://localhost:' + port + '/')
