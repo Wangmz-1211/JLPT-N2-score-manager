@@ -4,8 +4,11 @@ import {
 	createBlankScoreRecord,
 	getScoreListByUserEmail,
 	getScoreListByUserId,
+	getScoreRecordById,
 	removeScoreRecord,
+	updateScore,
 } from '../db/score'
+import { totalScoreCalculator } from '../utils'
 
 /*
     The identity schema from isAuthenticated middleware:
@@ -61,6 +64,12 @@ export const listByUserEmail = async (
 	}
 }
 
+/**
+ * Create a blank score record in the database, then return it.
+ * @param req
+ * @param res
+ * @returns the score record obj
+ */
 export const createScoreRecord = async (
 	req: express.Request,
 	res: express.Response
@@ -82,6 +91,14 @@ export const createScoreRecord = async (
 	}
 }
 
+/**
+ * Delete a user's score record.
+ * @isAuthenticated
+ * @isOwner
+ * @param req
+ * @param res
+ * @returns status code
+ */
 export const deleteScoreRecord = async (
 	req: express.Request,
 	res: express.Response
@@ -96,6 +113,56 @@ export const deleteScoreRecord = async (
 		return res.sendStatus(200)
 	} catch (error) {
 		console.error('[Controller - deleteScoreRecord] ', error)
+		return res.status(400).send('unknown error')
+	}
+}
+
+/**
+ * Update the ScoreRecord
+ * @isAuthenticated
+ * @isOwner
+ * @param req
+ * @param res
+ * @returns
+ */
+export const updateScoreRecord = async (
+	req: express.Request,
+	res: express.Response
+) => {
+	try {
+		// get the target information from isOwner middleware
+		// This is the information before update
+		const targetScoreRecord: Record<string, any> = get(
+			req,
+			'targetScoreRecord'
+		)!
+		let { scoreRecord } = req.body
+		if (!scoreRecord)
+			return res
+				.status(400)
+				.send(
+					'The scoreRecord information must be contained in the request body!'
+				)
+		if (
+			!(targetScoreRecord.user_id === scoreRecord.user_id) ||
+			!(targetScoreRecord.user_email === scoreRecord.user_email)
+		)
+			return res
+				.status(400)
+				.send("The user information can't be updated.")
+		console.log('DEBUG', targetScoreRecord, scoreRecord)
+		// !if the schema changes, this statement may throw some error
+		const totalScore = totalScoreCalculator(scoreRecord)
+		scoreRecord.total_score = totalScore
+		// I don't know why this would return the record before update.
+		// May be the findAndUpdate api is run recursively, from outer layer to inner layer.
+		// The result would return before the inner object updates.
+		// So the return information needs another query.
+		await updateScore(scoreRecord._id, scoreRecord)
+		const updatedScoreRecord = await getScoreRecordById(scoreRecord._id)
+		return res.status(200).send(updatedScoreRecord)
+	} catch (error) {
+		console.error('[Controller - updateScoreRecord] ', error)
 		return res.status(400).send('unknown error')
 	}
 }

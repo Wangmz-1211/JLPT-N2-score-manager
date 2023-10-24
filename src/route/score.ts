@@ -4,6 +4,7 @@ import {
 	createScoreRecord,
 	deleteScoreRecord,
 	listByUserId,
+	updateScoreRecord,
 } from '../controller/score'
 import isOwner from '../middlewares/isOwner'
 
@@ -12,6 +13,7 @@ scoreRouter.use(isAuthenticated)
 
 scoreRouter.get('/score/list', listByUserId)
 scoreRouter.post('/score/create', createScoreRecord)
+scoreRouter.post('/score/update', isOwner, updateScoreRecord)
 scoreRouter.delete('/score/delete', isOwner, deleteScoreRecord)
 
 export default scoreRouter
