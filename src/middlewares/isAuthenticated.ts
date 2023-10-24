@@ -10,7 +10,7 @@ export const isAuthenticated = async (
 	try {
 		let { sessionToken } = req.cookies
 		if (!sessionToken) return res.status(403).send("You haven't logged in.")
-		const user = await authenticateStatus()
+		const user = await authenticateStatus(sessionToken)
 		if (!user) return res.status(403).send("session token doesn't exist")
 		merge(req, { identity: user })
 		return next()
