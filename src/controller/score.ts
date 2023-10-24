@@ -1,6 +1,10 @@
 import express from 'express'
 import { get } from 'lodash'
-import { getScoreListByUserEmail, getScoreListByUserId } from '../db/score'
+import {
+	createBlankScoreRecord,
+	getScoreListByUserEmail,
+	getScoreListByUserId,
+} from '../db/score'
 
 /*
     The identity schema from isAuthenticated middleware:
@@ -52,6 +56,27 @@ export const listByUserEmail = async (
 		return res.status(200).send(scoreList)
 	} catch (error) {
 		console.error('[Controller - listByUserEmail] ' + error)
+		return res.status(400).send('unknown error')
+	}
+}
+
+export const createScoreRecord = async (
+	req: express.Request,
+	res: express.Response
+) => {
+	try {
+		// authentication information from server
+		const user: Record<string, string> = get(req, 'identity')!
+		let { title } = req.body
+		if (!title)
+			return res
+				.status(400)
+				.send('the title should be specified, as Nx-YYYY-MM')
+		const rec = await createBlankScoreRecord(user._id, user.email, title)
+		console.log(rec)
+		return res.send(rec)
+	} catch (error) {
+		console.error('[Controller - createScoreRecord] ' + error)
 		return res.status(400).send('unknown error')
 	}
 }
