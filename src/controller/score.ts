@@ -4,6 +4,7 @@ import {
 	createBlankScoreRecord,
 	getScoreListByUserEmail,
 	getScoreListByUserId,
+	removeScoreRecord,
 } from '../db/score'
 
 /*
@@ -32,7 +33,7 @@ export const listByUserId = async (
 	try {
 		// the user information was injected to request by [middleware-isAuthenticated]
 		const user: Record<string, string> = get(req, 'identity')!
-		const scoreList = await getScoreListByUserId(user.id)
+		const scoreList = await getScoreListByUserId(user._id)
 		return res.status(200).send(scoreList)
 	} catch (error) {
 		console.error('[Controller - listByUserId] ' + error)
@@ -76,7 +77,25 @@ export const createScoreRecord = async (
 		console.log(rec)
 		return res.send(rec)
 	} catch (error) {
-		console.error('[Controller - createScoreRecord] ' + error)
+		console.error('[Controller - createScoreRecord] ', error)
+		return res.status(400).send('unknown error')
+	}
+}
+
+export const deleteScoreRecord = async (
+	req: express.Request,
+	res: express.Response
+) => {
+	try {
+		// get the target information from isOwner middleware
+		const targetScoreRecord: Record<string, any> = get(
+			req,
+			'targetScoreRecord'
+		)!
+		await removeScoreRecord(targetScoreRecord._id)
+		return res.sendStatus(200)
+	} catch (error) {
+		console.error('[Controller - deleteScoreRecord] ', error)
 		return res.status(400).send('unknown error')
 	}
 }

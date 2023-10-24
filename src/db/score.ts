@@ -45,6 +45,8 @@ export const getScoreListByUserId = (id: String) =>
 	ScoreModel.find({ user_id: id })
 export const getScoreListByUserEmail = (email: String) =>
 	ScoreModel.find({ user_email: email })
+export const getScoreRecordById = (id: string) =>
+	ScoreModel.findOne({ _id: id })
 export const createBlankScoreRecord = (
 	user_id: string,
 	user_email: string,
@@ -56,5 +58,5 @@ export const createBlankScoreRecord = (
 		title,
 	}).save()
 
-export const deleteScoreRecord = (id: string) =>
+export const removeScoreRecord = (id: string) =>
 	ScoreModel.findOneAndRemove({ _id: id })
