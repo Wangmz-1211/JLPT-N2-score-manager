@@ -8,7 +8,12 @@ import {
 	removeScoreRecord,
 	updateScore,
 } from '../db/score'
-import { totalScoreCalculator } from '../utils'
+import {
+	vocabularyPart,
+	grammarPart,
+	readingPart,
+	listeningPart,
+} from '../utils'
 
 /*
     The identity schema from isAuthenticated middleware:
@@ -152,8 +157,19 @@ export const updateScoreRecord = async (
 				.send("The user information can't be updated.")
 		console.log('DEBUG', targetScoreRecord, scoreRecord)
 		// !if the schema changes, this statement may throw some error
-		const totalScore = totalScoreCalculator(scoreRecord)
-		scoreRecord.total_score = totalScore
+		const vocabulary_score = vocabularyPart(scoreRecord.vocabulary),
+			grammar_score      = grammarPart(scoreRecord.grammar),
+			reading_score      = readingPart(scoreRecord.reading),
+			listening_score    = listeningPart(scoreRecord.listening),
+			total_score        =
+				vocabulary_score +
+				grammar_score +
+				reading_score +
+				listening_score
+		scoreRecord.vocabulary_score = vocabulary_score
+		scoreRecord.grammar_score    = grammar_score
+		scoreRecord.reading_score    = reading_score
+		scoreRecord.listening_score  = listening_score
 		// I don't know why this would return the record before update.
 		// May be the findAndUpdate api is run recursively, from outer layer to inner layer.
 		// The result would return before the inner object updates.

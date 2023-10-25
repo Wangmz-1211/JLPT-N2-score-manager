@@ -9,6 +9,10 @@ const ScoreSchema = new mongoose.Schema({
 	title: { type: String, required: true },
 	// the current total score of the exam, avoid duplicated calculation
 	total_score: { type: Number, default: 0, required: true },
+	vocabulary_score: { type: Number, default: 0, required: true },
+	grammar_score: { type: Number, default: 0, required: true },
+	reading_score: { type: Number, default: 0, required: true },
+	listening_score: { type: Number, default: 0, required: true },
 	vocabulary: {
 		v1: { type: Number, default: 0, required: true },
 		v2: { type: Number, default: 0, required: true },
