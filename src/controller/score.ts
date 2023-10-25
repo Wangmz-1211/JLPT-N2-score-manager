@@ -170,6 +170,7 @@ export const updateScoreRecord = async (
 		scoreRecord.grammar_score    = grammar_score
 		scoreRecord.reading_score    = reading_score
 		scoreRecord.listening_score  = listening_score
+		scoreRecord.total_score		 = total_score
 		// I don't know why this would return the record before update.
 		// May be the findAndUpdate api is run recursively, from outer layer to inner layer.
 		// The result would return before the inner object updates.
