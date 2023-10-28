@@ -6,7 +6,7 @@ export const vocabularyPart = (vocabulary: Record<string, number>) => {
 	ans += vocabulary.v4
 	ans += vocabulary.v5
 	ans += vocabulary.v6 * 2
-	ans += 60 / 59
+	ans *= 60 / 59
 	return Math.round(ans)
 }
 
@@ -27,7 +27,7 @@ export const readingPart = (reading: Record<string, number>) => {
 	ans += reading.r12 * 3
 	ans += reading.r13 * 4
 	ans += reading.r14 * 3
-	ans += 60 / 55
+	ans *= 60 / 55
 	return Math.round(ans)
 }
 
