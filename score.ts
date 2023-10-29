@@ -1,6 +1,9 @@
-const baseURL = 'http://localhost:'
-const port = 8082
-const SERVER = baseURL + port
+/* server related setting */
+const protocol = 'http'
+const host =
+	process.env.NODE_ENV === 'production' ? 'wangmz.click' : 'localhost'
+const port = process.env.PORT || 8082
+const SERVER = protocol + '://' + host + ':' + port
 
 /**
  * The authentication was valid by the cookie, that's to say,
@@ -92,7 +95,7 @@ export const deleteScoreRecord = async (id: string) => {
 
 /**
  * Update the information of a score record. Then the total score will be calculated by the server.
- * However, the score of each part will not be stored in the database, so when the page need to show 
+ * However, the score of each part will not be stored in the database, so when the page need to show
  * the score of each part, you need to copy the `src/utils/index.ts` file, which includes several
  * function to analysis the data.
  * @param id _id attribute of the score record
