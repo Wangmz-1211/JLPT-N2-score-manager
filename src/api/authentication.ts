@@ -3,9 +3,10 @@
  */
 
 /* server related setting */
-const host = 'http://localhost'
-const port = 8081
-const SERVER = host + ':' + port
+const protocol = 'http'
+const host = process.env.AUTHENTICATION_HOST || 'localhost'
+const port = process.env.AUTHENTICATION_PORT || 8081
+const SERVER = protocol + '://' + host + ':' + port
 
 /* patterns */
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -262,6 +263,13 @@ export const userInfo = async (id: string) => {
 	}
 }
 
+/**
+ * ! service use only.
+ * This api is designed for other services to confirm the user identity.
+ * @param sessionToken the service should get the sessionToken from the cookie,
+ *  and then send to the authentication service through the request body.
+ * @return user information.
+ */
 export const authenticateStatus = async (sessionToken: string) => {
 	try {
 		if (!sessionToken) return
@@ -279,6 +287,53 @@ export const authenticateStatus = async (sessionToken: string) => {
 		return
 	} catch (error) {
 		console.log('[API-authentication-check]', error)
+		return
+	}
+}
+
+/**
+ * Check the user's login status by cookie. This can be used to fetch information
+ * from the server after a page refresh operation.
+ * @returns the user information
+ */
+export const loginStatus = async () => {
+	try {
+		const res = await fetch(SERVER + '/api/user/login/status', {
+			method: 'POST',
+			credentials: 'include',
+		})
+		if (res.status == 200) return await res.json() //user information
+		return
+	} catch (error) {
+		console.log('[API-authentication-login-check]', error)
+		return
+	}
+}
+
+/**
+ * Change a user's own username.
+ * @param email the user's email, for checking identity
+ * @param username the new desired username
+ * @returns
+ */
+export const changeUsername = async (email: string, username: string) => {
+	try {
+		const res = await fetch(SERVER + '/api/user/change-username', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+			body: JSON.stringify({
+				email,
+				username,
+			}),
+		})
+		if (res.status === 200) return
+		const info = await res.text()
+		throw new Error(info)
+	} catch (error) {
+		console.error('[API-authentication-change-username] ', error)
 		return
 	}
 }
